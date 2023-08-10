@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <dialog id="leaderboard-dialog">
+        <div id="close-leaderboard-div">
+            <button id="close-leaderboard-button"><i class="fa-solid fa-rectangle-xmark"></i></button>
+        </div>
+        <div id="switch-leaderboard-table-div"><button id="switch-leaderboard-table-button"><i class="fa-solid fa-caret-down"></i>&nbsp;&nbsp; NORMAL MODE LEADERBOARD &nbsp;&nbsp;<i class="fa-solid fa-caret-down"></i></button></div>
+        <div id="table-div">
+            <table id="normal-leaderboard-table">
+                <tr id="table-heading-row">
+                    <th><div class="table-header-divs" id="sort-by-name">NAME<i class="fa-solid fa-address-card"></i></div></th>
+                    <th><div class="table-header-divs" id="sort-by-answers">ANSWERED<i class="fa-solid fa-cloud-bolt"></i></div></th>
+                    <th><div class="table-header-divs" id="sort-by-percentage">CORRECT<i class="fa-solid fa-percent"></i></div></th>
+                    <th><div class="table-header-divs" id="sort-by-time">TIME (s)</i></div></th>
+                </tr>
+            </table>
+            <table id="challenge-leaderboard-table">
+                <tr id="table-heading-row">
+                    <th><div class="table-header-divs" id="sort-by-name">NAME<i class="fa-solid fa-address-card"></i></div></th>
+                    <th><div class="table-header-divs" id="sort-by-answers">ANSWERED<i class="fa-solid fa-cloud-bolt"></i></div></th>
+                    <th><div class="table-header-divs" id="sort-by-percentage">CORRECT<i class="fa-solid fa-percent"></i></div></th>
+                    <th><div class="table-header-divs" id="sort-by-time">TIME (s)</i></div></th>
+                </tr>
+            </table>
+        </div>
+        <div id='reset-leaderboard-div'>
+            <button id="reset-leaderboard-button">RESET LEADERBOARD STATS</button>
+            <div id="are-you-sure-div">Are you sure?
+                <div id="empty-div-before-buttons"></div>
+                <div id="yes-no-buttons-div">
+                    <button class='yes-no-buttons' id="yes-decision-button">YES</button>
+                    <button class='yes-no-buttons' id="no-decision-button">NO</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+    <div id="container-for-selection">
+        <div id="leaderboard-div">
+            <div id="trophy-div"><i class="fa-solid fa-trophy"></i></div>
+            <div id="question-div"><i class="fa-solid fa-circle-question"></i></div>
+            <div id="info-div">
+                <div class="info-text-divs" id="first-info-div">Your name goes on the leaderboard after <span id="ten-correct-answers-span">10 correct answers</span>.</div>
+                <div class="info-text-divs"><span id="leaderboard-span">Leaderboard</span> gets updated each time you finish the quiz and each stat is sortable.</div>
+                <div class="info-text-divs">You can <span id="switch-span">switch</span> between normal and challenge mode leaderboards.</div>
+                <div class="info-text-divs"><span id="correct-percent-span">Correct(%)</span> divides all correct asnwers by the total amount of questions chosen.</div>
+                <div class="info-text-divs"><span id="time-spent-span">Time(s)</span> represents total time spent answering questions.</div>
+                <div class="info-text-divs"><span id="normal-mode-span">Normal mode</span> allows you 10 seconds per answer, while <span id="challenge-mode-span">Challenge mode</span> allows you 5 seconds per answer.</div>
+                <div class="info-text-divs">Your name gets saved in name selection after you started the quiz.</div>
+                <div class="info-text-divs">Have fun playing and if you find any bugs, feel free to let me know.</div>
+                <div class="info-text-divs">This quiz is made by <a href="https://github.com/dexinho">dexinho</a></div>
+            </div>
+        </div>
+        <div id='nickname-div'>
+            <span id="nickname-span">Your <b><span class="name-summoner">n</span><span class="name-summoner">a</span><span class="name-summoner">m</span><span class="name-summoner">e</span></b> hero</span>
+            <input type="text" name="nickname" id="nickname-input">
+        </div>
+        <button id="choose-categories-button" class='choosing'>CHOOSE CATEGORIES</button>
+        <div id="categories-div">
+            <div class="empty"></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="arts-checkbox" class="categories"><span class='category-span'>Arts & Literature</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="film-checkbox" class="categories"><span class='category-span'>Film & TV</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="food-checkbox" class="categories"><span class='category-span'>Food & Drink</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="general-checkbox" class="categories"><span class='category-span'>General Knowledge</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="geography-checkbox" class="categories"><span class='category-span'>Geography</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="history-checkbox" class="categories"><span class='category-span'>History</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="music-checkbox" class="categories"><span class='category-span'>Music</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="science-checkbox" class="categories"><span class='category-span'>Science</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="society-checkbox" class="categories"><span class='category-span'>Society & Culture</span></label></div>
+            <div class="specific-category-div"><label><input type="checkbox" name="categories" id="sport-checkbox" class="categories"><span class='category-span'>Sport & Leisure</span></label></div>
+            <div id="ok-categories-div"><button id="ok-categories-button">OK</button></div>
+        </div>
+        <button id="choose-difficulty-button" class='choosing'>CHOOSE DIFFICULTY</button>
+        <div id="choose-difficulty-div">
+            <div class="difficulty-div"><button id="easy-button" class="difficulty">EASY</button></div>
+            <div class="difficulty-div"><button id="medium-button" class="difficulty">MEDIUM</button></div>
+            <div class="difficulty-div"><button id="hard-button" class="difficulty">HARD</button></div>
+        </div>
+        <div id="number-of-questions-div">
+            <span id="number-of-questions-span">Number of questions: <span id="amount-of-questions-span"><b>10</b></span></span>
+            <input type="range" name="questions" id="questions-slider" min='0' max="50" value="10">
+        </div>
+        <label for="lets-begin" id="lets-begin-label"><button id="lets-begin-button"><div id="lets-begin-div-span">LET'S BEGIN!</div></button></label>
+        <div id="challenge-mode-div"><button id="challenge-mode-button">CHALLENGE MODE</button></div>
+    </div>
+    <div id="container-for-questions">
+        <div id="return-finish-div">
+            <div id="return-button-div"><button id="return-button"><i class="fa-solid fa-backward">&nbsp;&nbsp;</i></button></div>
+            <div id="finish-button-div"><button id="finish-button">&nbsp;&nbsp;<i class="fa-solid fa-forward"></i></button></div>
+        </div>
+        <div id="chosen-category-and-question-div">
+            <div id="chosen-category-div">category</div>
+            <div id="chosen-question-div">question</div>
+        </div>
+        <div id="correct-or-wrong-answers-div">
+            <div class="correct-or-wrong-answer-div"><button class='correct-or-wrong-answer-buttons' id="correct-or-wrong-answer-button-one"></button></div>
+            <div class="correct-or-wrong-answer-div"><button class='correct-or-wrong-answer-buttons' id="correct-or-wrong-answer-button-two"></button></div>
+            <div class="correct-or-wrong-answer-div"><button class='correct-or-wrong-answer-buttons' id="correct-or-wrong-answer-button-three"></button></div>
+            <div class="correct-or-wrong-answer-div"><button class='correct-or-wrong-answer-buttons' id="correct-or-wrong-answer-button-four"></button></div>
+        </div>
+        <div id="heart-div">
+            <div id="timer-inside-heart"></div>
+            <div id="left-side-of-heart-div"></div>
+            <div id="right-side-of-heart-div"></div>
+        </div>
+        <div id="question-order-div">
+            <div id="current-question-number-div"></div>
+            <div id="total-questions-div"></div>
+        </div>
+    </div>
+    <div id="container-for-ending">
+        <div id="final-screen-div">
+            <div id="score-div">
+                <div id="result-nickname-div">dexinho</div>
+                <div id="result-scored-div">Final score</div>
+                <div id="result-points-scored-div">10/10</div>
+            </div>
+            <div id="line-break"></div>
+            <div id="time-played-div">
+                <div id="total-time-played-div">Total time played</div>
+                <div id="number-of-seconds-div">50 seconds</div>
+            </div>    
+            <div id="play-again-div"><button id="play-again-button"><i class="fa-solid fa-fan"></i> Play again <i class="fa-solid fa-fan"></i></button></div>
+        </div>
+    </div>
+    <dialog id="dialog-name">
+        <div id="modal-container">
+            <div id="dialog-input-div"><input type="text" id="dialog-name-input" maxlength="10"></div>
+            <div id="choose-your-name-div">Choose your name</div>
+            <select id="name-selection" name="name-selection">
+                <option value="dexinho">dexinho</option>
+                <option value="test">test</option>
+            </select>&nbsp;&nbsp;&nbsp;<span><i class="fa-regular fa-trash-can"></i></span>
+            <div id="close-dialog-div">
+                <button id="close-dialog-for-name-button">OK</button>
+            </div>
+        </div>
+    </dialog>
+</body>
+</html>
