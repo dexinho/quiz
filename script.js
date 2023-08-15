@@ -212,19 +212,7 @@ function quizStarting() {
 
     timeoutIds.push(idOne)
 
-    fetchData()
-
-    timerInsideHeart.textContent = secondsToAnswer
-
-    categories.forEach(category => category.checked = false)
-
-    letsBeginButton.style.transform = 'rotate(2205deg)'
-    letsBeginButton.style.transitionProperty = 'height, width'
-    letsBeginButton.style.transition = '1s ease-in-out'
-    containerForSelection.style.opacity = '0'
-
-
-
+    
     if (difficultySelected === 'CHOOSE DIFFICULTY') {
         let randomDifficulty = difficultiesArr[Math.floor(Math.random() * 3)]
         if (randomDifficulty === 'EASY') {
@@ -238,8 +226,25 @@ function quizStarting() {
         }
     }
     if (checkedCategoriesArr.length === 0) {
-        checkedCategoriesArr.push(categoriesArr[Math.floor(Math.random() * categoriesArr.length)])
+        const categoriesToRandomizeArr = [...categoriesArr]
+        while (categoriesToRandomizeArr.length > 0) {
+            let randomCategory = categoriesToRandomizeArr.splice(Math.floor(Math.random() * categoriesToRandomizeArr.length), 1)
+            console.log('random category this is ---- ', randomCategory)
+            checkedCategoriesArr.push(randomCategory[0])
+        }
     }
+
+    fetchData()
+
+    timerInsideHeart.textContent = secondsToAnswer
+
+    categories.forEach(category => category.checked = false)
+
+    letsBeginButton.style.transform = 'rotate(2205deg)'
+    letsBeginButton.style.transitionProperty = 'height, width'
+    letsBeginButton.style.transition = '1s ease-in-out'
+    containerForSelection.style.opacity = '0'
+
 
     setTimeout(() => {
         letsBeginButton.style.transform = 'rotate(45deg)'
@@ -273,12 +278,17 @@ function resetContainers() {
     chooseCategoriesDiv.style.height = 0
     chooseDifficultyDiv.style.height = 0
 
-    leaderboardTypeSwitch = true
-    leaderboardToReset = true
-    leaderboardStatsSwitch = false
-    leaderboardStatsType = 'normalLeaderboardStats'
-    normalLeaderboardTable.style.display = 'block'
-    challengeLeaderboardTable.style.display = 'none'
+    if (normalLeaderboardTable.style.display === 'none') {
+        leaderboardStatsType = 'normalLeaderboardStats'
+        switchLeaderboard()
+    }
+
+    // leaderboardTypeSwitch = true
+    // leaderboardToReset = true
+    // leaderboardStatsSwitch = false
+    // normalLeaderboardTable.style.display = 'block'
+    // challengeLeaderboardTable.style.display = 'none'
+    
     currentQuestion = 1
     difficultySelected = 'CHOOSE DIFFICULTY'
     easyQuestionsBorder = '5px dotted green'
@@ -495,6 +505,8 @@ async function fetchData() {
         : difficultySelected.toLowerCase()
     console.log(difficultyForLink)
 
+    console.log('----checked categories arr', checkedCategoriesArr)
+
     let categoriesForLink = checkedCategoriesArr[0]
     for (let i = 1; i < checkedCategoriesArr.length; i++) {
         categoriesForLink += ',' + checkedCategoriesArr[i]
@@ -566,8 +578,9 @@ function makePlayerObj() {
         name: nicknameInput.value,
         answered: pointsScored,
         total: Number(questionsSlider.value),
-        correct: (pointsScored / questionsSlider.value * 100).toFixed(2),
-        time: totalTimePlayed
+        correct: (pointsScored / questionsSlider.value * 100).toFixed(1),
+        time: totalTimePlayed,
+        averageTime: (totalTimePlayed / questionsSlider.value).toFixed(1)
     }
 }
 
@@ -582,8 +595,9 @@ function finalScore() {
         console.log(foundPlayerObj)
         foundPlayerObj.answered += pointsScored
         foundPlayerObj.total += Number(questionsSlider.value)
-        foundPlayerObj.correct = (foundPlayerObj.answered / foundPlayerObj.total * 100).toFixed(2)
+        foundPlayerObj.correct = (foundPlayerObj.answered / foundPlayerObj.total * 100).toFixed(1)
         foundPlayerObj.time += totalTimePlayed
+        foundPlayerObj.averageTime = (foundPlayerObj.time / foundPlayerObj.total).toFixed(1)
         currentObj = foundPlayerObj
     }
     else {
@@ -809,6 +823,7 @@ function addPlayersToLeaderboard() {
             newRow.appendChild(document.createElement('td')).innerText = playerObj.name
             newRow.appendChild(document.createElement('td')).innerText = playerObj.answered
             newRow.appendChild(document.createElement('td')).innerText = playerObj.correct
+            newRow.appendChild(document.createElement('td')).innerText = playerObj.averageTime
             newRow.appendChild(document.createElement('td')).innerText = playerObj.time
             tbody.appendChild(newRow)
         }
@@ -822,14 +837,17 @@ function addPlayersToLeaderboard() {
             let secondsTd = document.createElement('td')
             let thirdTd = document.createElement('td')
             let fourthTd = document.createElement('td')
+            let fifthTd = document.createElement('td')
             firstTd.style.color = 'white'
             secondsTd.style.color = 'white'
             thirdTd.style.color = 'white'
             fourthTd.style.color = 'white'
+            fifthTd.style.color = 'white'
             newRow.appendChild(firstTd).innerText = playerObj.name
             newRow.appendChild(secondsTd).innerText = playerObj.answered
             newRow.appendChild(thirdTd).innerText = playerObj.correct
-            newRow.appendChild(fourthTd).innerText = playerObj.time
+            newRow.appendChild(fourthTd).innerText = playerObj.averageTime
+            newRow.appendChild(fifthTd).innerText = playerObj.time
             tbody.appendChild(newRow) 
         }
     })
@@ -871,19 +889,23 @@ tableHeaderDivs.forEach(header => {
     header.addEventListener('click', () => {
         let leaderboardType = leaderboardTypeSwitch ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
         const chosenStatsArr = JSON.parse(localStorage.getItem(leaderboardType)) || []
-        if (header.id === 'sort-by-name') {
+        if (header.classList.contains('sort-by-name')) {
             sortLeaderBoard(chosenStatsArr, 'name', nameSwitch)
             nameSwitch *= -1
         }
-        else if (header.id === 'sort-by-answers') {
+        else if (header.classList.contains('sort-by-answers')) {
             sortLeaderBoard(chosenStatsArr, 'answered', answersSwitch)
             answersSwitch *= -1
         }
-        else if (header.id === 'sort-by-percentage') {
+        else if (header.classList.contains('sort-by-percentage')) {
             sortLeaderBoard(chosenStatsArr, 'correct', answersSwitch)
             answersSwitch *= -1
         }
-        else if (header.id === 'sort-by-time') {
+        else if (header.classList.contains('sort-by-average-time')) {
+            sortLeaderBoard(chosenStatsArr, 'averageTime', answersSwitch)
+            answersSwitch *= -1
+        }
+        else if (header.classList.contains('sort-by-time')) {
             sortLeaderBoard(chosenStatsArr, 'time', answersSwitch)
             answersSwitch *= -1
         }
@@ -893,11 +915,7 @@ tableHeaderDivs.forEach(header => {
     })
 })
 
-const switchLeaderboardButton = document.querySelector('#switch-leaderboard-table-button')
-const normalLeaderboardTable = document.querySelector('#normal-leaderboard-table')
-const challengeLeaderboardTable = document.querySelector('#challenge-leaderboard-table')
-switchLeaderboardButton.addEventListener('click', () => {
-
+function switchLeaderboard(){
     const tdCells = document.querySelectorAll('td')
 
     if (leaderboardTypeSwitch) {
@@ -926,7 +944,12 @@ switchLeaderboardButton.addEventListener('click', () => {
 
     leaderboardToReset = !leaderboardToReset
     leaderboardTypeSwitch = !leaderboardTypeSwitch
-})
+}
+
+const switchLeaderboardButton = document.querySelector('#switch-leaderboard-table-button')
+const normalLeaderboardTable = document.querySelector('#normal-leaderboard-table')
+const challengeLeaderboardTable = document.querySelector('#challenge-leaderboard-table')
+switchLeaderboardButton.addEventListener('click', switchLeaderboard)
 
 addPlayersToLeaderboard()
 updateNameSelection()
