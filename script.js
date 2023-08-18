@@ -13,101 +13,114 @@ const totalQuestionsDiv = document.querySelector('#total-questions-div')
 const resultNicknameDiv = document.querySelector('#result-nickname-div')
 const resultPointsScoredDiv = document.querySelector('#result-points-scored-div')
 const numberOfSecondsDiv = document.querySelector('#number-of-seconds-div')
-let currentQuestion = 1
-currentQuestionNumberDiv.textContent = currentQuestion
-let leaderboardTypeSwitch = true
-let leaderboardToReset = true
-let leaderboardStatsSwitch = false
-let leaderboardStatsType = 'normalLeaderboardStats'
+currentQuestionNumberDiv.textContent = 1
+let CURRENT_QUESTION_NUMBER = 1
+let LEADERBOARD_TYPE_SWITCH = true
+let LEADERBOARD_TO_RESET = true
+let LEADERBOARD_STATS_SWITCH = false
+let LEADERBOARD_STATS_TYPE = 'normalLeaderboardStats'
 
-const selectedNamesArr = JSON.parse(localStorage.getItem('selectedNames')) || []
+const TIMEOUT_IDS = []
+const INTERVAL_IDS = []
 
-console.log(localStorage)
+const SELECTED_NAMES_ARR = JSON.parse(localStorage.getItem('selectedNames')) || []
 
-let defaultQuestionsBorder = '5px dotted gray'
-let easyQuestionsBorder = '5px dotted green'
-let mediumQuestionsBorder = "5px dotted rgb(230, 216, 67)"
-let hardQuestionsBorder = "5px dotted lightcoral"
+let DEFAULT_QUESTIONS_BORDER = '5px dotted gray'
+let EASY_QUESTIONS_BORDER = '5px dotted green'
+let MEDIUM_QUESTIONS_BORDER = "5px dotted rgb(230, 216, 67)"
+let HARD_QUESTIONS_BORDER = "5px dotted lightcoral"
 
-let animatedMain = 'animated-main'
-let animatedParts = 'animated-parts'
+let ANIMATED_MAIN = 'animated-main'
+let ANIMATED_PARTS = 'animated-parts'
 
-let categoriesOpened = false
-let difficultyOpened = false
-const colors = ['red', 'gold', 'green', 'purple', 'royalblue', 'brown', 'green', 'purple'
+let CATEGORIES_OPENED = false
+let DIFFICULTY_OPENED = false
+let DIFFICULTY_SELECTED = 'CHOOSE DIFFICULTY'
+
+const CHECKED_CATEGORIES_ARR = []
+const COLORS_ARR = ['red', 'gold', 'green', 'purple', 'royalblue', 'brown', 'green', 'purple'
     , 'red', 'blue', 'green', 'purple', 'cyan', 'maroon', 'green', 'purple', 'red', 'blue', 'green', 'purple'
     , 'red', 'blue', 'green', 'purple', 'red', 'blue', 'green', 'purple', 'cyan', 'maroon', 'purple']
-const checkedCategoriesArr = []
-let difficultySelected = 'CHOOSE DIFFICULTY'
-const difficultiesArr = ['EASY', 'MEDIUM', 'HARD']
-const categoriesArr = ['Arts & Literature', 'Film & TV', 'Food & Drink', 'General Knowledge', 'Geography', 'History'
+
+const DIFFICULTIES_ARR = ['EASY', 'MEDIUM', 'HARD']
+const CATEGORIES_ARR = ['Arts & Literature', 'Film & TV', 'Food & Drink', 'General Knowledge', 'Geography', 'History'
     , 'Music', 'Science', 'Society & Culture', 'Sport & Leisure']
 
 const nameSummoner = document.querySelectorAll('.name-summoner')
-let colorChangingInterval = setInterval(() => {
-    let randomIndexLetter = Math.floor(Math.random() * 4)
-    let randomIndexColor = Math.floor(Math.random() * 10)
-    nameSummoner[randomIndexLetter].style.color = colors[randomIndexColor]
-}, 50)
 
-let totalTimePlayed = 0
-let currentObj = {}
-let secondsToAnswer = 10
-let counter = secondsToAnswer
-let quizQuestions = []
-let pointsScored = 0
+function startColorChangingInterval(start = true) {
+
+    if (!start) {
+        for (const id of INTERVAL_IDS) clearInterval(id)
+    }
+    else {
+        let colorChangingInterval = setInterval(() => {
+            let randomIndexLetter = Math.floor(Math.random() * 4)
+            let randomIndexColor = Math.floor(Math.random() * 10)
+            nameSummoner[randomIndexLetter].style.color = COLORS_ARR[randomIndexColor]
+        }, 50)
+        INTERVAL_IDS.push(colorChangingInterval)
+    }
+}
+
+let TOTAL_TIME_PLAYED = 0
+let POINTS_SCORED = 0
+let SECONDS_TO_ANSWER = 10
+let COUNTER = SECONDS_TO_ANSWER
+let QUIZ_QUESTIONS_LEFT_TO_ANSWER = []
+let CURRENT_QUESTION_OBJ = {}
 
 function openOrCloseDifficulty() {
     const contentHeight = chooseDifficultyDiv.scrollHeight;
 
-    if (!difficultyOpened) {
+    if (!DIFFICULTY_OPENED) {
         chooseDifficultyDiv.style.height = contentHeight + 'px';
     } else {
         chooseDifficultyDiv.style.height = '0';
     }
 
-    chooseDifficultyButton.textContent = difficultySelected
+    chooseDifficultyButton.textContent = DIFFICULTY_SELECTED
 
     if (chooseDifficultyButton.textContent === 'EASY') {
-        containerForSelection.style.border = easyQuestionsBorder
-        letsBeginButton.style.border = easyQuestionsBorder
-        containerForQuestions.style.border = easyQuestionsBorder
+        containerForSelection.style.border = EASY_QUESTIONS_BORDER
+        letsBeginButton.style.border = EASY_QUESTIONS_BORDER
+        containerForQuestions.style.border = EASY_QUESTIONS_BORDER
         chooseDifficultyButton.style.color = 'green'
     }
     else if (chooseDifficultyButton.textContent === 'MEDIUM') {
-        containerForSelection.style.border = mediumQuestionsBorder
-        letsBeginButton.style.border = mediumQuestionsBorder
-        containerForQuestions.style.border = mediumQuestionsBorder
+        containerForSelection.style.border = MEDIUM_QUESTIONS_BORDER
+        letsBeginButton.style.border = MEDIUM_QUESTIONS_BORDER
+        containerForQuestions.style.border = MEDIUM_QUESTIONS_BORDER
         chooseDifficultyButton.style.color = 'rgb(230, 216, 67)'
     }
     else if (chooseDifficultyButton.textContent === 'HARD') {
-        containerForSelection.style.border = hardQuestionsBorder
-        letsBeginButton.style.border = hardQuestionsBorder
-        containerForQuestions.style.border = hardQuestionsBorder
+        containerForSelection.style.border = HARD_QUESTIONS_BORDER
+        letsBeginButton.style.border = HARD_QUESTIONS_BORDER
+        containerForQuestions.style.border = HARD_QUESTIONS_BORDER
         chooseDifficultyButton.style.color = 'lightcoral'
     }
 
-    difficultyOpened = !difficultyOpened;
+    DIFFICULTY_OPENED = !DIFFICULTY_OPENED;
 }
 
 function openOrCloseCategories() {
     const contentHeight = chooseCategoriesDiv.scrollHeight + 19;
-    if (!categoriesOpened) {
+    if (!CATEGORIES_OPENED) {
         chooseCategoriesDiv.style.height = contentHeight + 'px';
     } else {
         chooseCategoriesDiv.style.height = '0';
     }
 
-    if (checkedCategoriesArr.length > 0) {
+    if (CHECKED_CATEGORIES_ARR.length > 0) {
         chooseCategoriesButton.textContent = ''
-        if (checkedCategoriesArr.length < 4) {
-            for (let i = 0; i < checkedCategoriesArr.length; i++) {
-                if (checkedCategoriesArr[0]) chooseCategoriesButton.textContent += checkedCategoriesArr[i] + '   '
+        if (CHECKED_CATEGORIES_ARR.length < 4) {
+            for (let i = 0; i < CHECKED_CATEGORIES_ARR.length; i++) {
+                if (CHECKED_CATEGORIES_ARR[0]) chooseCategoriesButton.textContent += CHECKED_CATEGORIES_ARR[i] + '   '
             }
         }
         else {
             for (let i = 0; i < 3; i++) {
-                if (checkedCategoriesArr[0]) chooseCategoriesButton.textContent += checkedCategoriesArr[i] + '   '
+                if (CHECKED_CATEGORIES_ARR[0]) chooseCategoriesButton.textContent += CHECKED_CATEGORIES_ARR[i] + '   '
             }
             chooseCategoriesButton.textContent += '...'
         }
@@ -115,12 +128,12 @@ function openOrCloseCategories() {
         else chooseCategoriesButton.style.fontSize = '20px'
     }
 
-    if (checkedCategoriesArr.length === 0) {
+    if (CHECKED_CATEGORIES_ARR.length === 0) {
         chooseCategoriesButton.textContent = 'CHOOSE CATEGORIES'
         chooseCategoriesButton.style.fontSize = '20px'
     }
 
-    categoriesOpened = !categoriesOpened;
+    CATEGORIES_OPENED = !CATEGORIES_OPENED;
 }
 
 chooseCategoriesButton.addEventListener('click', openOrCloseCategories);
@@ -132,7 +145,7 @@ chooseDifficultyButton.addEventListener('click', openOrCloseDifficulty);
 const difficultySelection = document.querySelectorAll('.difficulty')
 difficultySelection.forEach(difficulty => {
     difficulty.addEventListener('click', () => {
-        difficultySelected = difficulty.textContent
+        DIFFICULTY_SELECTED = difficulty.textContent
         openOrCloseDifficulty()
     })
 })
@@ -162,23 +175,27 @@ const categories = document.querySelectorAll('.categories')
 categories.forEach(category => {
     category.addEventListener('change', () => {
         if (category.checked) {
-            checkedCategoriesArr.push(category.nextElementSibling.textContent)
+            CHECKED_CATEGORIES_ARR.push(category.nextElementSibling.textContent)
             category.nextElementSibling.style.color = 'lightgreen'
         }
         else {
-            checkedCategoriesArr.splice(checkedCategoriesArr.indexOf(category.nextElementSibling.textContent), 1)
+            CHECKED_CATEGORIES_ARR.splice(CHECKED_CATEGORIES_ARR.indexOf(category.nextElementSibling.textContent), 1)
             category.nextElementSibling.style.color = 'white'
         }
-        console.log(checkedCategoriesArr)
+        console.log(CHECKED_CATEGORIES_ARR)
     })
 })
 
-function letterByLetter(text, location, delay = 0) {
-    for (let i = 0; i < text.length; i++) {
-        setTimeout(() => {
-            location.textContent += text[i]
-        }, delay + i * 100);
-    }
+function letterByLetterResults(text, location) {
+    return new Promise(res => {
+        for (let i = 0; i < text.length; i++) {
+            let id = setTimeout(() => {
+                location.textContent += text[i]
+                if (text.length === i + 1) res()
+            }, i * 100);
+            TIMEOUT_IDS.push(id)
+        }
+    })
 }
 
 function removeAnimationFromHeart() {
@@ -190,11 +207,40 @@ function removeAnimationFromHeart() {
     rightSideOfHeartDiv.classList.remove('animated-parts-challenge')
 }
 
-function quizStarting() {
+function setupDifficultiesAndCategory() {
+    if (DIFFICULTY_SELECTED === 'CHOOSE DIFFICULTY') {
+        let randomDifficulty = DIFFICULTIES_ARR[Math.floor(Math.random() * 3)]
+        if (randomDifficulty === 'EASY') {
+            containerForQuestions.style.border = EASY_QUESTIONS_BORDER
+        }
+        else if (randomDifficulty === 'MEDIUM') {
+            containerForQuestions.style.border = MEDIUM_QUESTIONS_BORDER
+        }
+        else if (randomDifficulty === 'HARD') {
+            containerForQuestions.style.border = HARD_QUESTIONS_BORDER
+        }
+    }
+    if (CHECKED_CATEGORIES_ARR.length === 0) {
+        const categoriesToRandomizeArr = [...CATEGORIES_ARR]
+        while (categoriesToRandomizeArr.length > 0) {
+            let randomCategory = categoriesToRandomizeArr.splice(Math.floor(Math.random() * categoriesToRandomizeArr.length), 1)
+            console.log('random category this is ---- ', randomCategory)
+            CHECKED_CATEGORIES_ARR.push(randomCategory[0])
+        }
+    }
+}
 
-    if (!selectedNamesArr.includes(nicknameInput.value) && nicknameInput.value !== '') {
-        selectedNamesArr.push(nicknameInput.value)
-        localStorage.setItem('selectedNames', JSON.stringify(selectedNamesArr))
+function rotateLetsBeginButton(rotationDeg) {
+    letsBeginButton.style.transform = rotationDeg
+    letsBeginButton.style.transitionProperty = 'height, width'
+    letsBeginButton.style.transition = '1s ease-in-out'
+}
+
+async function beforeQuizStarts() {
+
+    if (!SELECTED_NAMES_ARR.includes(nicknameInput.value) && nicknameInput.value !== '') {
+        SELECTED_NAMES_ARR.push(nicknameInput.value)
+        localStorage.setItem('selectedNames', JSON.stringify(SELECTED_NAMES_ARR))
         updateNameSelection()
     }
 
@@ -204,62 +250,37 @@ function quizStarting() {
 
     removeAnimationFromHeart()
 
-    let idOne = setTimeout(() => {
-        pointsScored = 0
-        letsBeginButton.disabled = false
-        counter = secondsToAnswer
-    }, 1010)
+    // await pauseForHowManyMilliseconds(1010)
 
-    timeoutIds.push(idOne)
+    setupDifficultiesAndCategory()
 
-    
-    if (difficultySelected === 'CHOOSE DIFFICULTY') {
-        let randomDifficulty = difficultiesArr[Math.floor(Math.random() * 3)]
-        if (randomDifficulty === 'EASY') {
-            containerForQuestions.style.border = easyQuestionsBorder
-        }
-        else if (randomDifficulty === 'MEDIUM') {
-            containerForQuestions.style.border = mediumQuestionsBorder
-        }
-        else if (randomDifficulty === 'HARD') {
-            containerForQuestions.style.border = hardQuestionsBorder
-        }
-    }
-    if (checkedCategoriesArr.length === 0) {
-        const categoriesToRandomizeArr = [...categoriesArr]
-        while (categoriesToRandomizeArr.length > 0) {
-            let randomCategory = categoriesToRandomizeArr.splice(Math.floor(Math.random() * categoriesToRandomizeArr.length), 1)
-            console.log('random category this is ---- ', randomCategory)
-            checkedCategoriesArr.push(randomCategory[0])
-        }
-    }
+    fetchQuizData()
 
-    fetchData()
-
-    timerInsideHeart.textContent = secondsToAnswer
+    timerInsideHeart.textContent = SECONDS_TO_ANSWER
 
     categories.forEach(category => category.checked = false)
 
-    letsBeginButton.style.transform = 'rotate(2205deg)'
-    letsBeginButton.style.transitionProperty = 'height, width'
-    letsBeginButton.style.transition = '1s ease-in-out'
+    rotateLetsBeginButton('rotate(2205deg)')
     containerForSelection.style.opacity = '0'
 
+    await pauseForHowManyMilliseconds(1000)
 
-    setTimeout(() => {
-        letsBeginButton.style.transform = 'rotate(45deg)'
-        containerForQuestions.style.opacity = '1'
-        containerForSelection.style.display = 'none'
-        containerForQuestions.style.display = 'block'
-    }, 1000)
-    clearInterval(colorChangingInterval)
+    POINTS_SCORED = 0
+    letsBeginButton.disabled = false
+    COUNTER = SECONDS_TO_ANSWER
+
+    startColorChangingInterval(false)
+    rotateLetsBeginButton('rotate(45deg)')
+    containerForQuestions.style.opacity = '1'
+    containerForSelection.style.display = 'none'
+    containerForQuestions.style.display = 'block'
 }
 
 
 const letsBeginButton = document.querySelector('#lets-begin-button')
-letsBeginButton.addEventListener('click', quizStarting)
+letsBeginButton.addEventListener('click', beforeQuizStarts)
 
-function resetContainers() {
+function changeEverythingBackOnSelectionScreen() {
     nicknameInput.value = ''
     dialogNameInput.value = ''
     containerForEnding.style.display = 'none'
@@ -268,10 +289,11 @@ function resetContainers() {
     chooseCategoriesButton.style.color = 'brown'
     chooseCategoriesButton.style.fontSize = '20px'
     amountOfQuestionsSpan.innerText = (questionsSlider.value = 10)
-    checkedCategoriesArr.length = 0
-    letsBeginButton.style.border = defaultQuestionsBorder
-    containerForSelection.style.border = defaultQuestionsBorder
-    containerForQuestions.style.border = defaultQuestionsBorder
+    CHECKED_CATEGORIES_ARR.length = 0
+    letsBeginButton.style.border = DEFAULT_QUESTIONS_BORDER
+    containerForSelection.style.border = DEFAULT_QUESTIONS_BORDER
+    containerForQuestions.style.border = DEFAULT_QUESTIONS_BORDER
+    containerForQuestions.style.opacity = '0'
     letsBeginButton.style.transition = '0.3s ease-in-out'
     challengeModeButton.style.color = 'white'
     letsBeginButton.disabled = false
@@ -279,66 +301,60 @@ function resetContainers() {
     chooseDifficultyDiv.style.height = 0
 
     if (normalLeaderboardTable.style.display === 'none') {
-        leaderboardStatsType = 'normalLeaderboardStats'
+        LEADERBOARD_STATS_TYPE = 'normalLeaderboardStats'
         switchLeaderboard()
     }
 
-    // leaderboardTypeSwitch = true
-    // leaderboardToReset = true
-    // leaderboardStatsSwitch = false
-    // normalLeaderboardTable.style.display = 'block'
-    // challengeLeaderboardTable.style.display = 'none'
-    
-    currentQuestion = 1
-    difficultySelected = 'CHOOSE DIFFICULTY'
-    easyQuestionsBorder = '5px dotted green'
-    mediumQuestionsBorder = "5px dotted rgb(230, 216, 67)"
-    hardQuestionsBorder = "5px dotted lightcoral"
-    challengeActivated = false
-    animatedMain = 'animated-main'
-    animatedParts = 'animated-parts'
-    totalTimePlayed = 0
+    CURRENT_QUESTION_NUMBER = 1
+    DIFFICULTY_SELECTED = 'CHOOSE DIFFICULTY'
+    EASY_QUESTIONS_BORDER = '5px dotted green'
+    MEDIUM_QUESTIONS_BORDER = "5px dotted rgb(230, 216, 67)"
+    HARD_QUESTIONS_BORDER = "5px dotted lightcoral"
+    CHALLENGE_ACTIVATED = false
+    ANIMATED_MAIN = 'animated-main'
+    ANIMATED_PARTS = 'animated-parts'
+    TOTAL_TIME_PLAYED = 0
 
     categorySpan.forEach(category => category.style.color = 'white')
-
-    // for (const id of timeoutIds) clearTimeout(id)
-
-    setTimeout(() => {
-        chosenCategoryDiv.innerText = ''
-        chosenQuestionDiv.innerText = ''
-        correctOrWrongButtons.forEach(button => button.innerText = '')
-        removeAnimationFromHeart()
-        totalQuestionsDiv.innerText = 10
-        secondsToAnswer = 10
-        currentQuestionNumberDiv.textContent = 1
-        correctOrWrongButtons.forEach(button => {
-            button.style.pointerEvents = 'none'
-            button.style.transform = 'scale(1)'
-            button.disabled = true
-            button.style.backgroundColor = 'transparent'
-        })
-        for (const id of timeoutIds) clearTimeout(id)
-        timeoutIds.length = 0
-    }, 1000)
-
-    containerForQuestions.style.opacity = '0'
-
-    setTimeout(() => {
-        containerForSelection.style.opacity = '1'
-        containerForSelection.style.display = 'block'
-        containerForQuestions.style.opacity = '0'
-        finalScreenDiv.style.opacity = '0'
-        containerForQuestions.style.display = 'none'
-    }, 1000)
-
-    colorChangingInterval = setInterval(() => {
-        let randomIndexLetter = Math.floor(Math.random() * 4)
-        let randomIndexColor = Math.floor(Math.random() * 10)
-        nameSummoner[randomIndexLetter].style.color = colors[randomIndexColor]
-    }, 50)
 }
 
-const timeoutIds = []
+const resetTextAndAnimationOnSelectionScreen = () => {
+    return new Promise(res => {
+        let id = setTimeout(() => {
+            removeAnimationFromHeart()
+            containerForSelection.style.opacity = '1'
+            containerForSelection.style.display = 'block'
+            containerForQuestions.style.opacity = '0'
+            finalScreenDiv.style.opacity = '0'
+            containerForQuestions.style.display = 'none'
+            chosenCategoryDiv.innerText = ''
+            chosenQuestionDiv.innerText = ''
+            correctOrWrongButtons.forEach(button => button.innerText = '')
+            totalQuestionsDiv.innerText = 10
+            SECONDS_TO_ANSWER = 10
+            currentQuestionNumberDiv.textContent = 1
+            correctOrWrongButtons.forEach(button => {
+                button.style.pointerEvents = 'none'
+                button.style.transform = 'scale(1)'
+                button.disabled = true
+                button.style.backgroundColor = 'transparent'
+            })
+            res()
+        }, 1000)
+        TIMEOUT_IDS.push(id)
+    })
+}
+
+async function resetContainers() {
+
+    for (const id of TIMEOUT_IDS) clearTimeout(id)
+    TIMEOUT_IDS.length = 0
+
+    changeEverythingBackOnSelectionScreen()
+    startColorChangingInterval()
+
+    await resetTextAndAnimationOnSelectionScreen()
+}
 
 const heartDiv = document.querySelector('#heart-div')
 const leftSideOfHeartDiv = document.querySelector('#left-side-of-heart-div')
@@ -354,7 +370,7 @@ function showCorrectAnswer(obj) {
         })
     }, 2000);
 
-    timeoutIds.push(id)
+    TIMEOUT_IDS.push(id)
 
     correctOrWrongButtons.forEach(button => {
         if (button.innerText === obj.correctAnswer) {
@@ -367,11 +383,84 @@ function showCorrectAnswer(obj) {
     })
 }
 
-function startQuiz() {
+const showQuestion = () => {
+    CURRENT_QUESTION_OBJ = QUIZ_QUESTIONS_LEFT_TO_ANSWER.pop()
+    let arrOfQuestions = [CURRENT_QUESTION_OBJ.correctAnswer]
+    CURRENT_QUESTION_OBJ.incorrectAnswers.forEach(answer => arrOfQuestions.push(answer))
 
-    if (counter === -1) counter = 0
-    totalTimePlayed += secondsToAnswer - counter;
-    console.log(counter);
+    let randomIndexOne = Math.floor(Math.random() * 2);
+    let randomIndexTwo = Math.floor(Math.random() * 2) + 2;
+    let randomIndexThree = Math.floor(Math.random() * 2);
+    let randomIndexFour = Math.floor(Math.random() * 2) + 2;
+
+    [arrOfQuestions[randomIndexOne], arrOfQuestions[randomIndexTwo]] = [arrOfQuestions[randomIndexTwo], arrOfQuestions[randomIndexOne]];
+    [arrOfQuestions[randomIndexThree], arrOfQuestions[randomIndexFour]] = [arrOfQuestions[randomIndexFour], arrOfQuestions[randomIndexThree]];
+
+    for (let i = 0; i < arrOfQuestions.length; i++) {
+        correctOrWrongButtons[i].innerText = arrOfQuestions[i]
+        if (correctOrWrongButtons[i].innerText.length < 20) correctOrWrongButtons[i].style.fontSize = '20px'
+        else if (correctOrWrongButtons[i].innerText.length < 40) correctOrWrongButtons[i].style.fontSize = '18px'
+        else if (correctOrWrongButtons[i].innerText.length < 60) correctOrWrongButtons[i].style.fontSize = '15px'
+        else correctOrWrongButtons[i].style.fontSize = '12px'
+    }
+
+    chosenCategoryDiv.innerText = CURRENT_QUESTION_OBJ.category
+    chosenQuestionDiv.innerText = ''
+
+    finishButton.disabled = false
+
+    currentQuestionNumberDiv.textContent = CURRENT_QUESTION_NUMBER++
+
+    correctOrWrongButtons.forEach(button => {
+        button.style.pointerEvents = 'auto'
+        button.style.transform = 'scale(1)'
+        button.disabled = false
+    })
+
+    if (chosenCategoryDiv.innerText.length < 50) chosenCategoryDiv.style.fontSize = '20px'
+    else if (chosenCategoryDiv.innerText.length < 100) chosenCategoryDiv.style.fontSize = '15px'
+    else chosenCategoryDiv.style.fontSize = '10px'
+}
+
+
+function writeQuestionLetterByLetter() {
+    return new Promise(res => {
+        for (let i = 0; i < CURRENT_QUESTION_OBJ.question.length; i++) {
+            let id = setTimeout(() => {
+                chosenQuestionDiv.textContent += CURRENT_QUESTION_OBJ.question[i]
+                if (i === CURRENT_QUESTION_OBJ.question.length - 1) res()
+            }, i * 15);
+            TIMEOUT_IDS.push(id)
+        }
+    })
+}
+
+function addAnimationToHeart() {
+    heartDiv.classList.add(ANIMATED_MAIN)
+    leftSideOfHeartDiv.classList.add(ANIMATED_PARTS)
+    rightSideOfHeartDiv.classList.add(ANIMATED_PARTS)
+}
+
+function pauseForHowManyMilliseconds(delay) {
+    return new Promise(res => {
+        let id = setTimeout(() => {
+            res()
+        }, delay);
+        TIMEOUT_IDS.push(id)
+    })
+}
+
+
+async function startQuiz(resuming = false) {
+
+    if (resuming) await pauseForHowManyMilliseconds(2000)
+
+    for (const id of TIMEOUT_IDS) clearTimeout(id)
+    TIMEOUT_IDS.length = 0
+
+    if (COUNTER === -1) COUNTER = 0
+    TOTAL_TIME_PLAYED += SECONDS_TO_ANSWER - COUNTER;
+    console.log(COUNTER);
 
     correctOrWrongButtons.forEach(button => {
         button.style.color = 'black'
@@ -380,114 +469,58 @@ function startQuiz() {
 
     removeAnimationFromHeart()
 
-    for (const id of timeoutIds) clearTimeout(id)
-    timeoutIds.length = 0
+    if (QUIZ_QUESTIONS_LEFT_TO_ANSWER.length > 0) {
+        showQuestion()
 
-    if (quizQuestions.length > 0) {
+        await writeQuestionLetterByLetter()
+        await pauseForHowManyMilliseconds(1000)
 
-        currentObj = quizQuestions.pop()
-        let arrOfQuestions = [currentObj.correctAnswer]
-        currentObj.incorrectAnswers.forEach(answer => arrOfQuestions.push(answer))
-
-        let randomIndexOne = Math.floor(Math.random() * 2);
-        let randomIndexTwo = Math.floor(Math.random() * 2) + 2;
-        let randomIndexThree = Math.floor(Math.random() * 2);
-        let randomIndexFour = Math.floor(Math.random() * 2) + 2;
-
-        [arrOfQuestions[randomIndexOne], arrOfQuestions[randomIndexTwo]] = [arrOfQuestions[randomIndexTwo], arrOfQuestions[randomIndexOne]];
-        [arrOfQuestions[randomIndexThree], arrOfQuestions[randomIndexFour]] = [arrOfQuestions[randomIndexFour], arrOfQuestions[randomIndexThree]];
-
-        for (let i = 0; i < arrOfQuestions.length; i++) {
-            correctOrWrongButtons[i].innerText = arrOfQuestions[i]
-            if (correctOrWrongButtons[i].innerText.length < 20) correctOrWrongButtons[i].style.fontSize = '20px'
-            else if (correctOrWrongButtons[i].innerText.length < 40) correctOrWrongButtons[i].style.fontSize = '18px'
-            else if (correctOrWrongButtons[i].innerText.length < 60) correctOrWrongButtons[i].style.fontSize = '15px'
-            else correctOrWrongButtons[i].style.fontSize = '12px'
-        }
-
-        chosenCategoryDiv.innerText = currentObj.category
-        chosenQuestionDiv.innerText = ''
-
-        finishButton.disabled = false
-
-        currentQuestionNumberDiv.textContent = currentQuestion++
-
-        correctOrWrongButtons.forEach(button => {
-            button.style.pointerEvents = 'auto'
-            button.style.transform = 'scale(1)'
-            button.disabled = false
-        })
-
-        for (let i = 0; i < currentObj.question.length; i++) {
-            let id = setTimeout(() => {
-                chosenQuestionDiv.textContent += currentObj.question[i]
-            }, i * 15);
-            timeoutIds.push(id)
-        }
-
-        // chosenQuestionDiv.innerText = currentObj.question
-
-        if (chosenCategoryDiv.innerText.length < 50) chosenCategoryDiv.style.fontSize = '20px'
-        else if (chosenCategoryDiv.innerText.length < 100) chosenCategoryDiv.style.fontSize = '15px'
-        else chosenCategoryDiv.style.fontSize = '10px'
-
-
-
-        let idOne = setTimeout(() => {
-            heartDiv.classList.add(animatedMain)
-            leftSideOfHeartDiv.classList.add(animatedParts)
-            rightSideOfHeartDiv.classList.add(animatedParts)
-            counter = secondsToAnswer
-            startTimer()
-        }, 2000);
-
-
-        let idTwo = setTimeout(() => {
-            showCorrectAnswer(currentObj)
-        }, secondsToAnswer * 1000 + 2000)
-
-        timeoutIds.push(idOne)
-        timeoutIds.push(idTwo)
+        addAnimationToHeart()
+        startTimer()
     }
     else finalScore()
 }
 
 const timerInsideHeart = document.querySelector('#timer-inside-heart')
 
-function startTimer() {
+const reduceSecondsFromTimer = () => {
+    return new Promise(res => {
+        for (let i = 0; i <= SECONDS_TO_ANSWER; i++) {
+            let id = setTimeout(() => {
+                timerInsideHeart.innerText = COUNTER--
+                if (i === SECONDS_TO_ANSWER) {
+                    showCorrectAnswer(CURRENT_QUESTION_OBJ)
+                    res()
+                }
+            }, i * 1000)
+            TIMEOUT_IDS.push(id)
+        }
+    })
+}
+
+async function startTimer() {
 
     totalQuestionsDiv.innerText = questionsSlider.value
-    counter = secondsToAnswer
-    timerInsideHeart.innerText = counter
-    for (let i = 0; i <= secondsToAnswer; i++) {
-        let id = setTimeout(() => {
-            timerInsideHeart.innerText = counter--
-        }, i * 1000)
-        timeoutIds.push(id)
-    }
+    COUNTER = SECONDS_TO_ANSWER
+    timerInsideHeart.innerText = COUNTER
 
-    let idOne = setTimeout(() => {
-        removeAnimationFromHeart()
-    }, secondsToAnswer * 1000);
-    timeoutIds.push(idOne)
+    await reduceSecondsFromTimer()
+    removeAnimationFromHeart()
+    await pauseForHowManyMilliseconds(2000)
+    startQuiz()
 
-    let idtwo = setTimeout(() => {
-        startQuiz()
-        counter = secondsToAnswer
-        correctOrWrongButtons.forEach(button => {
-            button.style.backgroundColor = 'whitesmoke'
-            button.style.color = 'black'
-        })
-    }, secondsToAnswer * 1000 + 2000)
-    timeoutIds.push(idtwo)
+    correctOrWrongButtons.forEach(button => {
+        button.style.backgroundColor = 'whitesmoke'
+        button.style.color = 'black'
+    })
 }
 function pauseTimer() {
-    for (const id of timeoutIds) clearTimeout(id)
+    for (const id of TIMEOUT_IDS) clearTimeout(id)
 }
 function stopTimer() {
-    for (const id of timeoutIds) clearTimeout(id)
+    for (const id of TIMEOUT_IDS) clearTimeout(id)
     timerInsideHeart.innerText = ''
-    counter = secondsToAnswer
+    COUNTER = SECONDS_TO_ANSWER
 }
 
 const returnButton = document.querySelector('#return-button')
@@ -496,47 +529,43 @@ returnButton.addEventListener('click', resetContainers)
 const finishButton = document.querySelector('#finish-button')
 finishButton.addEventListener('click', finalScore)
 
-async function fetchData() {
-    console.log(questionsSlider.value)
-    let numberOfQuestionsForLink = questionsSlider.value
+async function fetchQuizData() {
+    try {
+        let numberOfQuestionsForLink = questionsSlider.value
 
-    let difficultyForLink = difficultySelected === 'CHOOSE DIFFICULTY'
-        ? difficultiesArr[Math.floor(Math.random() * 2)].toLowerCase()
-        : difficultySelected.toLowerCase()
-    console.log(difficultyForLink)
+        let difficultyForLink = DIFFICULTY_SELECTED === 'CHOOSE DIFFICULTY'
+            ? DIFFICULTIES_ARR[Math.floor(Math.random() * 2)].toLowerCase()
+            : DIFFICULTY_SELECTED.toLowerCase()
 
-    console.log('----checked categories arr', checkedCategoriesArr)
+        let categoriesForLink = CHECKED_CATEGORIES_ARR[0]
+        for (let i = 1; i < CHECKED_CATEGORIES_ARR.length; i++) {
+            categoriesForLink += ',' + CHECKED_CATEGORIES_ARR[i]
+        }
 
-    let categoriesForLink = checkedCategoriesArr[0]
-    for (let i = 1; i < checkedCategoriesArr.length; i++) {
-        categoriesForLink += ',' + checkedCategoriesArr[i]
-    }
+        categoriesForLink = categoriesForLink === undefined
+            ? CATEGORIES_ARR[Math.floor(Math.random() * 10)].toLowerCase().replace(/\&/g, 'and').replace(/\s/g, '_')
+            : categoriesForLink.toLowerCase().replace(/\&/g, 'and').replace(/\s/g, '_')
 
-    categoriesForLink = categoriesForLink === undefined
-        ? categoriesArr[Math.floor(Math.random() * 10)].toLowerCase().replace(/\&/g, 'and').replace(/\s/g, '_')
-        : categoriesForLink.toLowerCase().replace(/\&/g, 'and').replace(/\s/g, '_')
+        let link = `https://the-trivia-api.com/api/questions?categories=${categoriesForLink}&limit=${numberOfQuestionsForLink}&difficulty=${difficultyForLink}`
 
-    console.log(categoriesForLink)
-    let link = `https://the-trivia-api.com/api/questions?categories=${categoriesForLink}&limit=${numberOfQuestionsForLink}&difficulty=${difficultyForLink}`
-    console.log(link)
-    const data = await fetch(link)
-    quizQuestions = await data.json()
+        const data = await fetch(link)
+        QUIZ_QUESTIONS_LEFT_TO_ANSWER = await data.json()
 
-    if (challengeActivated) {
-        chosenCategoryDiv.innerText = "LET'S GO"
-        chosenQuestionDiv.innerText = 'BRAVE HERO!'
-    }
-    else {
-        chosenCategoryDiv.innerText = "HAVE FUN"
-        chosenQuestionDiv.innerText = 'CLEVER HERO!'
-    }
+        if (CHALLENGE_ACTIVATED) {
+            chosenCategoryDiv.innerText = "LET'S GO"
+            chosenQuestionDiv.innerText = 'BRAVE HERO!'
+        }
+        else {
+            chosenCategoryDiv.innerText = "HAVE FUN"
+            chosenQuestionDiv.innerText = 'CLEVER HERO!'
+        }
 
-
-    setTimeout(() => {
+        await pauseForHowManyMilliseconds(2000)
         startQuiz()
-    }, 2000)
+    } catch (err) {
+        console.log(err)
+    }
 
-    console.log(quizQuestions)
 }
 
 const chosenCategoryDiv = document.querySelector('#chosen-category-div')
@@ -548,26 +577,31 @@ correctOrWrongButtons.forEach(button => {
     button.disabled = true
 })
 
+function hideQuestionContainerRevealEndingContainer() {
+    return new Promise(res => {
+        let id = setTimeout(() => {
+            containerForQuestions.style.display = 'none'
+            containerForEnding.style.opacity = '1'
+            containerForEnding.style.display = 'flex'
+            containerForEnding.style.justifyContent = 'center'
+            containerForEnding.style.alignItems = 'center'
+            res()
+        }, 1000)
+        TIMEOUT_IDS.push(id)
+    })
+}
+
 correctOrWrongButtons.forEach(button => {
     button.addEventListener('click', () => {
         button.style.transform = 'scale(1.1)'
         correctOrWrongButtons.forEach(eachButton => {
             eachButton.style.pointerEvents = 'none'
         })
+        if (button.innerText === CURRENT_QUESTION_OBJ.correctAnswer) POINTS_SCORED++
+
         pauseTimer()
-        if (button.innerText === currentObj.correctAnswer) {
-            pointsScored++
-            showCorrectAnswer(currentObj)
-        }
-        else {
-            showCorrectAnswer(currentObj)
-        }
-
-        let id = setTimeout(() => {
-            startQuiz()
-        }, 2000)
-
-        timeoutIds.push(id)
+        showCorrectAnswer(CURRENT_QUESTION_OBJ)
+        startQuiz(true)
     })
 })
 const containerForEnding = document.querySelector('#container-for-ending')
@@ -576,27 +610,37 @@ function makePlayerObj() {
     return {
         picture: '',
         name: nicknameInput.value,
-        answered: pointsScored,
+        answered: POINTS_SCORED,
         total: Number(questionsSlider.value),
-        correct: (pointsScored / questionsSlider.value * 100).toFixed(1),
-        time: totalTimePlayed,
-        averageTime: (totalTimePlayed / questionsSlider.value).toFixed(1)
+        correct: (POINTS_SCORED / questionsSlider.value * 100).toFixed(1),
+        time: TOTAL_TIME_PLAYED,
+        averageTime: (TOTAL_TIME_PLAYED / questionsSlider.value).toFixed(1)
     }
 }
 
-function finalScore() {
+function revealFinalScreenDiv() {
+    return new Promise(res => {
+        let id = setTimeout(() => {
+            finalScreenDiv.style.opacity = '1'
+            res()
+        }, 1000)
+        TIMEOUT_IDS.push(id)
+    })
+}
+
+async function finalScore() {
 
     let currentObj = {}
 
-    const finalLeaderboardArr = JSON.parse(localStorage.getItem(leaderboardStatsType)) || []
+    const finalLeaderboardArr = JSON.parse(localStorage.getItem(LEADERBOARD_STATS_TYPE)) || []
 
     let foundPlayerObj = finalLeaderboardArr.find(obj => obj.name === nicknameInput.value)
     if (foundPlayerObj !== undefined) {
         console.log(foundPlayerObj)
-        foundPlayerObj.answered += pointsScored
+        foundPlayerObj.answered += POINTS_SCORED
         foundPlayerObj.total += Number(questionsSlider.value)
         foundPlayerObj.correct = (foundPlayerObj.answered / foundPlayerObj.total * 100).toFixed(1)
-        foundPlayerObj.time += totalTimePlayed
+        foundPlayerObj.time += TOTAL_TIME_PLAYED
         foundPlayerObj.averageTime = (foundPlayerObj.time / foundPlayerObj.total).toFixed(1)
         currentObj = foundPlayerObj
     }
@@ -605,57 +649,46 @@ function finalScore() {
         finalLeaderboardArr.push(currentObj)
     }
 
-    localStorage.setItem(leaderboardStatsType, JSON.stringify(finalLeaderboardArr))
+    localStorage.setItem(LEADERBOARD_STATS_TYPE, JSON.stringify(finalLeaderboardArr))
     addPlayersToLeaderboard()
 
     let textForNickname = nicknameInput.value === '' ? 'UNKNOWN' : nicknameInput.value
-    let textForPointsScored = `${pointsScored}/${questionsSlider.value}`
-    let textForSeconds = `${totalTimePlayed} seconds`
+    let textForPointsScored = `${POINTS_SCORED}/${questionsSlider.value}`
+    let textForSeconds = `${TOTAL_TIME_PLAYED} seconds`
 
     resultNicknameDiv.innerText = ''
     resultPointsScoredDiv.innerText = (resultPointsScoredDiv.style.color = 'blue', '')
     numberOfSecondsDiv.innerText = (numberOfSecondsDiv.style.color = 'red', '')
 
-    counter = secondsToAnswer
+    COUNTER = SECONDS_TO_ANSWER
 
     containerForQuestions.style.opacity = '0'
 
-    if (pointsScored / questionsSlider.value * 100 > 75)
+    if (POINTS_SCORED / questionsSlider.value * 100 > 75)
         containerForEnding.style.backgroundImage = `url('pictures/albert_einstein.jpg')`
-    else if (pointsScored / questionsSlider.value * 100 > 50)
+    else if (POINTS_SCORED / questionsSlider.value * 100 > 50)
         containerForEnding.style.backgroundImage = `url('pictures/big_brain.jpg')`
-    else if (pointsScored / questionsSlider.value * 100 > 25)
+    else if (POINTS_SCORED / questionsSlider.value * 100 > 25)
         containerForEnding.style.backgroundImage = `url('pictures/not_bad.jpg')`
     else containerForEnding.style.backgroundImage = `url('pictures/better_luck_next_time.webp')`
 
-    for (const id of timeoutIds) clearTimeout(id)
+    for (const id of TIMEOUT_IDS) clearTimeout(id)
 
-    let idOne = setTimeout(() => {
-        containerForQuestions.style.display = 'none'
-        containerForEnding.style.opacity = '1'
-        containerForEnding.style.display = 'flex'
-        containerForEnding.style.justifyContent = 'center'
-        containerForEnding.style.alignItems = 'center'
-    }, 1000)
+    await hideQuestionContainerRevealEndingContainer()
 
-    let idTwo = setTimeout(() => {
-        finalScreenDiv.style.opacity = '1'
-    }, 2000)
+    await revealFinalScreenDiv()
+    await pauseForHowManyMilliseconds(1500)
 
-    let idThree = setTimeout(() => {
-        letterByLetter(textForNickname, resultNicknameDiv, 0)
-        letterByLetter(textForPointsScored, resultPointsScoredDiv, textForNickname.length * 150)
-        letterByLetter(textForSeconds, numberOfSecondsDiv, textForNickname.length * 150 + 500)
-    }, 3500);
-
-    timeoutIds.push(idOne, idTwo, idThree)
+    await letterByLetterResults(textForNickname, resultNicknameDiv)
+    await letterByLetterResults(textForPointsScored, resultPointsScoredDiv)
+    await letterByLetterResults(textForSeconds, numberOfSecondsDiv)
 }
 
 const playAgainButton = document.querySelector('#play-again-button')
 
 playAgainButton.addEventListener('click', () => {
 
-    for (const id of timeoutIds) clearTimeout(id)
+    for (const id of TIMEOUT_IDS) clearTimeout(id)
     containerForEnding.style.opacity = '0'
 
     let id = setTimeout(() => {
@@ -663,72 +696,41 @@ playAgainButton.addEventListener('click', () => {
         containerForSelection.style.display = 'block'
         containerForSelection.style.opacity = '1'
         resetContainers()
-        counter = secondsToAnswer
+        COUNTER = SECONDS_TO_ANSWER
     }, 1000);
 
-    timeoutIds.push(id)
+    TIMEOUT_IDS.push(id)
 })
 
 const challengeModeButton = document.querySelector('#challenge-mode-button')
-let challengeActivated = false
+let CHALLENGE_ACTIVATED = false
 challengeModeButton.addEventListener('click', () => {
 
-    challengeActivated = !challengeActivated
+    CHALLENGE_ACTIVATED = !CHALLENGE_ACTIVATED
 
-    leaderboardStatsType = leaderboardStatsSwitch ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
-    leaderboardStatsSwitch = !leaderboardStatsSwitch
+    LEADERBOARD_STATS_TYPE = LEADERBOARD_STATS_SWITCH ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
+    LEADERBOARD_STATS_SWITCH = !LEADERBOARD_STATS_SWITCH
 
     containerForSelection.style.transition = 'ease-in 0.2s'
 
-    easyQuestionsBorder = challengeActivated ? '8px dotted green' : '5px dotted green'
-    mediumQuestionsBorder = challengeActivated ? '8px dotted rgb(230, 216, 67)' : '5px dotted rgb(230, 216, 67)'
-    hardQuestionsBorder = challengeActivated ? '8px dotted lightcoral' : '5px dotted lightcoral'
-    animatedMain = challengeActivated ? 'animated-main-challenge' : 'animated-main'
-    animatedParts = challengeActivated ? 'animated-parts-challenge' : 'animated-parts'
-    secondsToAnswer = challengeActivated ? 5 : 10
+    EASY_QUESTIONS_BORDER = CHALLENGE_ACTIVATED ? '8px dotted green' : '5px dotted green'
+    MEDIUM_QUESTIONS_BORDER = CHALLENGE_ACTIVATED ? '8px dotted rgb(230, 216, 67)' : '5px dotted rgb(230, 216, 67)'
+    HARD_QUESTIONS_BORDER = CHALLENGE_ACTIVATED ? '8px dotted lightcoral' : '5px dotted lightcoral'
+    ANIMATED_MAIN = CHALLENGE_ACTIVATED ? 'animated-main-challenge' : 'animated-main'
+    ANIMATED_PARTS = CHALLENGE_ACTIVATED ? 'animated-parts-challenge' : 'animated-parts'
+    SECONDS_TO_ANSWER = CHALLENGE_ACTIVATED ? 5 : 10
 
-    letsBeginButton.style.borderWidth = challengeActivated ? '8px' : '5px'
-    containerForSelection.style.borderWidth = challengeActivated ? '8px' : '5px'
-    containerForQuestions.style.borderWidth = challengeActivated ? '8px' : '5px'
+    letsBeginButton.style.borderWidth = CHALLENGE_ACTIVATED ? '8px' : '5px'
+    containerForSelection.style.borderWidth = CHALLENGE_ACTIVATED ? '8px' : '5px'
+    containerForQuestions.style.borderWidth = CHALLENGE_ACTIVATED ? '8px' : '5px'
 
-    challengeModeButton.style.color = challengeActivated ? 'black' : 'whitesmoke'
-
-    // if (challengeActivated) {
-    //     easyQuestionsBorder = '8px dotted green'
-    //     mediumQuestionsBorder = '8px dotted rgb(230, 216, 67)'
-    //     hardQuestionsBorder = '8px dotted lightcoral'
-    //     animatedMain = 'animated-main-challenge'
-    //     animatedParts = 'animated-parts-challenge'
-    //     secondsToAnswer = 5
-
-    //     letsBeginButton.style.borderWidth = '8px'
-    //     containerForSelection.style.borderWidth = '8px'
-    //     containerForQuestions.style.borderWidth = '8px'
-
-    //     challengeModeButton.style.color = 'black'
-    // }
-    // else {
-    //     easyQuestionsBorder = '5px dotted green'
-    //     mediumQuestionsBorder = '5px dotted rgb(230, 216, 67)'
-    //     hardQuestionsBorder = '5px dotted lightcoral'
-    //     animatedMain = 'animated-main'
-    //     animatedParts = 'animated-parts'
-    //     secondsToAnswer = 10
-
-    //     letsBeginButton.style.borderWidth = '5px'
-    //     containerForSelection.style.borderWidth = '5px'
-    //     containerForQuestions.style.borderWidth = '5px'
-
-    //     challengeModeButton.style.color = 'whitesmoke'
-    // }
+    challengeModeButton.style.color = CHALLENGE_ACTIVATED ? 'black' : 'whitesmoke'
 })
 
 const dialogName = document.querySelector('#dialog-name')
 const dialogNameInput = document.querySelector('#dialog-name-input')
 const nameSelection = document.querySelector('#name-selection')
 nicknameInput.addEventListener('click', () => {
-    // if (nameSelection.options[0] !== undefined)
-    //     dialogNameInput.value = nameSelection.options[0].innerText
     dialogName.showModal()
 })
 
@@ -762,7 +764,7 @@ const deleteNameFromTheSelection = document.querySelector('.fa-trash-can')
 
 function updateNameSelection() {
     nameSelection.innerText = ''
-    selectedNamesArr.forEach(name => {
+    SELECTED_NAMES_ARR.forEach(name => {
         const newOptionName = document.createElement('option')
         newOptionName.value = name
         newOptionName.innerText = name
@@ -770,16 +772,16 @@ function updateNameSelection() {
         nameSelection.append(newOptionName)
     })
 
-    localStorage.setItem('selectedNames', JSON.stringify(selectedNamesArr))
+    localStorage.setItem('selectedNames', JSON.stringify(SELECTED_NAMES_ARR))
 }
 
 deleteNameFromTheSelection.addEventListener('click', () => {
     const selectedIndex = nameSelection.selectedIndex;
     const selectedOption = nameSelection.options[selectedIndex];
-    let indexToSplice = selectedNamesArr.indexOf(selectedOption.innerText)
+    let indexToSplice = SELECTED_NAMES_ARR.indexOf(selectedOption.innerText)
 
     if (indexToSplice !== -1) {
-        selectedNamesArr.splice(indexToSplice, 1)
+        SELECTED_NAMES_ARR.splice(indexToSplice, 1)
         updateNameSelection()
         dialogNameInput.value = nameSelection.options[0].innerText
     }
@@ -848,7 +850,7 @@ function addPlayersToLeaderboard() {
             newRow.appendChild(thirdTd).innerText = playerObj.correct
             newRow.appendChild(fourthTd).innerText = playerObj.averageTime
             newRow.appendChild(fifthTd).innerText = playerObj.time
-            tbody.appendChild(newRow) 
+            tbody.appendChild(newRow)
         }
     })
 }
@@ -859,7 +861,7 @@ const areYouSureDiv = document.querySelector('#are-you-sure-div')
 
 yesDecisionButton.addEventListener('click', () => {
     areYouSureDiv.style.display = 'none'
-    resetLeaderboard(leaderboardToReset)
+    resetLeaderboard(LEADERBOARD_TO_RESET)
 })
 noDecisionButton.addEventListener('click', () => {
     areYouSureDiv.style.display = 'none'
@@ -876,8 +878,8 @@ faCircleQuestion.addEventListener('click', () => {
     infoDiv.style.display = infoDiv.style.display === 'block' ? 'none' : 'block'
 })
 
-let nameSwitch = -1
-let answersSwitch = -1
+let LEADERBOARD_SORT_NAME_SWITCH = -1
+let LEADERBOARD_SORT_ANSWERS_SWITCH = -1
 
 function sortLeaderBoard(arr, property, switchType) {
     arr.sort((a, b) => {
@@ -887,27 +889,27 @@ function sortLeaderBoard(arr, property, switchType) {
 const tableHeaderDivs = document.querySelectorAll('.table-header-divs')
 tableHeaderDivs.forEach(header => {
     header.addEventListener('click', () => {
-        let leaderboardType = leaderboardTypeSwitch ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
+        let leaderboardType = LEADERBOARD_TYPE_SWITCH ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
         const chosenStatsArr = JSON.parse(localStorage.getItem(leaderboardType)) || []
         if (header.classList.contains('sort-by-name')) {
-            sortLeaderBoard(chosenStatsArr, 'name', nameSwitch)
-            nameSwitch *= -1
+            sortLeaderBoard(chosenStatsArr, 'name', LEADERBOARD_SORT_NAME_SWITCH)
+            LEADERBOARD_SORT_NAME_SWITCH *= -1
         }
         else if (header.classList.contains('sort-by-answers')) {
-            sortLeaderBoard(chosenStatsArr, 'answered', answersSwitch)
-            answersSwitch *= -1
+            sortLeaderBoard(chosenStatsArr, 'answered', LEADERBOARD_SORT_ANSWERS_SWITCH)
+            LEADERBOARD_SORT_ANSWERS_SWITCH *= -1
         }
         else if (header.classList.contains('sort-by-percentage')) {
-            sortLeaderBoard(chosenStatsArr, 'correct', answersSwitch)
-            answersSwitch *= -1
+            sortLeaderBoard(chosenStatsArr, 'correct', LEADERBOARD_SORT_ANSWERS_SWITCH)
+            LEADERBOARD_SORT_ANSWERS_SWITCH *= -1
         }
         else if (header.classList.contains('sort-by-average-time')) {
-            sortLeaderBoard(chosenStatsArr, 'averageTime', answersSwitch)
-            answersSwitch *= -1
+            sortLeaderBoard(chosenStatsArr, 'averageTime', LEADERBOARD_SORT_ANSWERS_SWITCH)
+            LEADERBOARD_SORT_ANSWERS_SWITCH *= -1
         }
         else if (header.classList.contains('sort-by-time')) {
-            sortLeaderBoard(chosenStatsArr, 'time', answersSwitch)
-            answersSwitch *= -1
+            sortLeaderBoard(chosenStatsArr, 'time', LEADERBOARD_SORT_ANSWERS_SWITCH)
+            LEADERBOARD_SORT_ANSWERS_SWITCH *= -1
         }
 
         localStorage.setItem(leaderboardType, JSON.stringify(chosenStatsArr))
@@ -915,10 +917,10 @@ tableHeaderDivs.forEach(header => {
     })
 })
 
-function switchLeaderboard(){
+function switchLeaderboard() {
     const tdCells = document.querySelectorAll('td')
 
-    if (leaderboardTypeSwitch) {
+    if (LEADERBOARD_TYPE_SWITCH) {
         normalLeaderboardTable.style.display = 'none'
         challengeLeaderboardTable.style.display = 'block'
         switchLeaderboardButton.style.background = 'radial-gradient(rgb(248, 248, 248), rgb(127, 127, 216))'
@@ -942,8 +944,8 @@ function switchLeaderboard(){
         tdCells.forEach(cell => cell.style.color = 'black')
     }
 
-    leaderboardToReset = !leaderboardToReset
-    leaderboardTypeSwitch = !leaderboardTypeSwitch
+    LEADERBOARD_TO_RESET = !LEADERBOARD_TO_RESET
+    LEADERBOARD_TYPE_SWITCH = !LEADERBOARD_TYPE_SWITCH
 }
 
 const switchLeaderboardButton = document.querySelector('#switch-leaderboard-table-button')
@@ -953,3 +955,4 @@ switchLeaderboardButton.addEventListener('click', switchLeaderboard)
 
 addPlayersToLeaderboard()
 updateNameSelection()
+startColorChangingInterval()
