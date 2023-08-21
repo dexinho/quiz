@@ -563,7 +563,12 @@ async function fetchQuizData() {
         await pauseForHowManyMilliseconds(2000)
         startQuiz()
     } catch (err) {
-        console.log(err)
+        const errorDialog = document.querySelector('#error-dialog')
+        errorDialog.showModal()
+        await pauseForHowManyMilliseconds(1000)
+        resetContainers()
+        await pauseForHowManyMilliseconds(1000)
+        errorDialog.close()
     }
 
 }

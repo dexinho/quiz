@@ -72,6 +72,16 @@ body {
     background-color: lightcyan;
 }
 
+#error-dialog {
+    transform: translate(0, 10px);
+}
+
+#error-dialog div {
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 #questions-slider::-webkit-slider-runnable-track {
     box-sizing: border-box;
     height: 20px;
