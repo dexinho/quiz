@@ -150,25 +150,25 @@ difficultySelection.forEach(difficulty => {
     })
 })
 
-const questionsSlider = document.querySelector('#questions-slider')
+const numberOfQuestionsSlider = document.querySelector('#questions-slider')
 const numberOfQuestionsSpan = document.querySelector('#number-of-questions-span')
 const amountOfQuestionsSpan = document.querySelector('#amount-of-questions-span')
 
 amountOfQuestionsSpan.style.color = 'gold'
-questionsSlider.borderInline = '10px solid red'
+numberOfQuestionsSlider.borderInline = '10px solid red'
 
-totalQuestionsDiv.textContent = questionsSlider.value
+totalQuestionsDiv.textContent = numberOfQuestionsSlider.value
 
-questionsSlider.addEventListener('input', () => {
-    amountOfQuestionsSpan.textContent = questionsSlider.value
+numberOfQuestionsSlider.addEventListener('input', () => {
+    amountOfQuestionsSpan.textContent = numberOfQuestionsSlider.value
 
-    if (questionsSlider.value >= 0 && questionsSlider.value < 10) amountOfQuestionsSpan.style.color = 'gold'
-    else if (questionsSlider.value > 10 && questionsSlider.value < 20) amountOfQuestionsSpan.style.color = 'green'
-    else if (questionsSlider.value > 20 && questionsSlider.value < 30) amountOfQuestionsSpan.style.color = 'blue'
-    else if (questionsSlider.value > 30 && questionsSlider.value < 40) amountOfQuestionsSpan.style.color = 'purple'
-    else if (questionsSlider.value > 40 && questionsSlider.value < 50) amountOfQuestionsSpan.style.color = 'red'
+    if (numberOfQuestionsSlider.value >= 0 && numberOfQuestionsSlider.value < 10) amountOfQuestionsSpan.style.color = 'gold'
+    else if (numberOfQuestionsSlider.value > 10 && numberOfQuestionsSlider.value < 20) amountOfQuestionsSpan.style.color = 'green'
+    else if (numberOfQuestionsSlider.value > 20 && numberOfQuestionsSlider.value < 30) amountOfQuestionsSpan.style.color = 'blue'
+    else if (numberOfQuestionsSlider.value > 30 && numberOfQuestionsSlider.value < 40) amountOfQuestionsSpan.style.color = 'purple'
+    else if (numberOfQuestionsSlider.value > 40 && numberOfQuestionsSlider.value < 50) amountOfQuestionsSpan.style.color = 'red'
 
-    totalQuestionsDiv.textContent = questionsSlider.value
+    totalQuestionsDiv.textContent = numberOfQuestionsSlider.value
 })
 
 const categories = document.querySelectorAll('.categories')
@@ -288,7 +288,7 @@ function changeEverythingBackOnSelectionScreen() {
     chooseCategoriesButton.textContent = 'CHOOSE CATEGORIES'
     chooseCategoriesButton.style.color = 'brown'
     chooseCategoriesButton.style.fontSize = '20px'
-    amountOfQuestionsSpan.innerText = (questionsSlider.value = 10)
+    amountOfQuestionsSpan.innerText = (numberOfQuestionsSlider.value = 10)
     CHECKED_CATEGORIES_ARR.length = 0
     letsBeginButton.style.border = DEFAULT_QUESTIONS_BORDER
     containerForSelection.style.border = DEFAULT_QUESTIONS_BORDER
@@ -385,19 +385,19 @@ function showCorrectAnswer(obj) {
 
 const showQuestion = () => {
     CURRENT_QUESTION_OBJ = QUIZ_QUESTIONS_LEFT_TO_ANSWER.pop()
-    let arrOfQuestions = [CURRENT_QUESTION_OBJ.correctAnswer]
-    CURRENT_QUESTION_OBJ.incorrectAnswers.forEach(answer => arrOfQuestions.push(answer))
+    let answersForUserToSelectArr = [CURRENT_QUESTION_OBJ.correctAnswer]
+    CURRENT_QUESTION_OBJ.incorrectAnswers.forEach(answer => answersForUserToSelectArr.push(answer))
 
     let randomIndexOne = Math.floor(Math.random() * 2);
     let randomIndexTwo = Math.floor(Math.random() * 2) + 2;
     let randomIndexThree = Math.floor(Math.random() * 2);
     let randomIndexFour = Math.floor(Math.random() * 2) + 2;
 
-    [arrOfQuestions[randomIndexOne], arrOfQuestions[randomIndexTwo]] = [arrOfQuestions[randomIndexTwo], arrOfQuestions[randomIndexOne]];
-    [arrOfQuestions[randomIndexThree], arrOfQuestions[randomIndexFour]] = [arrOfQuestions[randomIndexFour], arrOfQuestions[randomIndexThree]];
+    [answersForUserToSelectArr[randomIndexOne], answersForUserToSelectArr[randomIndexTwo]] = [answersForUserToSelectArr[randomIndexTwo], answersForUserToSelectArr[randomIndexOne]];
+    [answersForUserToSelectArr[randomIndexThree], answersForUserToSelectArr[randomIndexFour]] = [answersForUserToSelectArr[randomIndexFour], answersForUserToSelectArr[randomIndexThree]];
 
-    for (let i = 0; i < arrOfQuestions.length; i++) {
-        correctOrWrongButtons[i].innerText = arrOfQuestions[i]
+    for (let i = 0; i < answersForUserToSelectArr.length; i++) {
+        correctOrWrongButtons[i].innerText = answersForUserToSelectArr[i]
         if (correctOrWrongButtons[i].innerText.length < 20) correctOrWrongButtons[i].style.fontSize = '20px'
         else if (correctOrWrongButtons[i].innerText.length < 40) correctOrWrongButtons[i].style.fontSize = '18px'
         else if (correctOrWrongButtons[i].innerText.length < 60) correctOrWrongButtons[i].style.fontSize = '15px'
@@ -451,7 +451,7 @@ function pauseForHowManyMilliseconds(delay) {
 }
 
 
-async function startQuiz(resuming = false) {
+async function startOrResumeQuiz(resuming = false) {
 
     if (resuming) await pauseForHowManyMilliseconds(2000)
 
@@ -460,7 +460,7 @@ async function startQuiz(resuming = false) {
 
     if (COUNTER === -1) COUNTER = 0
     TOTAL_TIME_PLAYED += SECONDS_TO_ANSWER - COUNTER;
-    console.log(COUNTER);
+    // console.log(COUNTER);
 
     correctOrWrongButtons.forEach(button => {
         button.style.color = 'black'
@@ -476,7 +476,7 @@ async function startQuiz(resuming = false) {
         await pauseForHowManyMilliseconds(1000)
 
         addAnimationToHeart()
-        startTimer()
+        localStorageInput()
     }
     else finalScore()
 }
@@ -498,16 +498,16 @@ const reduceSecondsFromTimer = () => {
     })
 }
 
-async function startTimer() {
+async function localStorageInput() {
 
-    totalQuestionsDiv.innerText = questionsSlider.value
+    totalQuestionsDiv.innerText = numberOfQuestionsSlider.value
     COUNTER = SECONDS_TO_ANSWER
     timerInsideHeart.innerText = COUNTER
 
     await reduceSecondsFromTimer()
     removeAnimationFromHeart()
     await pauseForHowManyMilliseconds(2000)
-    startQuiz()
+    startOrResumeQuiz()
 
     correctOrWrongButtons.forEach(button => {
         button.style.backgroundColor = 'whitesmoke'
@@ -531,22 +531,22 @@ finishButton.addEventListener('click', finalScore)
 
 async function fetchQuizData() {
     try {
-        let numberOfQuestionsForLink = questionsSlider.value
+        let numberOfQuestionsForURL = numberOfQuestionsSlider.value
 
-        let difficultyForLink = DIFFICULTY_SELECTED === 'CHOOSE DIFFICULTY'
+        let difficultyForURL = DIFFICULTY_SELECTED === 'CHOOSE DIFFICULTY'
             ? DIFFICULTIES_ARR[Math.floor(Math.random() * 2)].toLowerCase()
             : DIFFICULTY_SELECTED.toLowerCase()
 
-        let categoriesForLink = CHECKED_CATEGORIES_ARR[0]
+        let categoriesForURL = CHECKED_CATEGORIES_ARR[0]
         for (let i = 1; i < CHECKED_CATEGORIES_ARR.length; i++) {
-            categoriesForLink += ',' + CHECKED_CATEGORIES_ARR[i]
+            categoriesForURL += ',' + CHECKED_CATEGORIES_ARR[i]
         }
 
-        categoriesForLink = categoriesForLink === undefined
+        categoriesForURL = categoriesForURL === undefined
             ? CATEGORIES_ARR[Math.floor(Math.random() * 10)].toLowerCase().replace(/\&/g, 'and').replace(/\s/g, '_')
-            : categoriesForLink.toLowerCase().replace(/\&/g, 'and').replace(/\s/g, '_')
+            : categoriesForURL.toLowerCase().replace(/\&/g, 'and').replace(/\s/g, '_')
 
-        let link = `https://the-trivia-api.com/api/questions?categories=${categoriesForLink}&limit=${numberOfQuestionsForLink}&difficulty=${difficultyForLink}`
+        let link = `https://the-trivia-api.com/api/questions?categories=${categoriesForURL}&limit=${numberOfQuestionsForURL}&difficulty=${difficultyForURL}`
 
         const data = await fetch(link)
         QUIZ_QUESTIONS_LEFT_TO_ANSWER = await data.json()
@@ -561,7 +561,7 @@ async function fetchQuizData() {
         }
 
         await pauseForHowManyMilliseconds(2000)
-        startQuiz()
+        startOrResumeQuiz()
     } catch (err) {
         const errorDialog = document.querySelector('#error-dialog')
         errorDialog.showModal()
@@ -606,7 +606,7 @@ correctOrWrongButtons.forEach(button => {
 
         pauseTimer()
         showCorrectAnswer(CURRENT_QUESTION_OBJ)
-        startQuiz(true)
+        startOrResumeQuiz(true)
     })
 })
 const containerForEnding = document.querySelector('#container-for-ending')
@@ -616,10 +616,10 @@ function makePlayerObj() {
         picture: '',
         name: nicknameInput.value,
         answered: POINTS_SCORED,
-        total: Number(questionsSlider.value),
-        correct: (POINTS_SCORED / questionsSlider.value * 100).toFixed(1),
+        total: Number(numberOfQuestionsSlider.value),
+        correct: (POINTS_SCORED / numberOfQuestionsSlider.value * 100).toFixed(1),
         time: TOTAL_TIME_PLAYED,
-        averageTime: (TOTAL_TIME_PLAYED / questionsSlider.value).toFixed(1)
+        averageTime: (TOTAL_TIME_PLAYED / numberOfQuestionsSlider.value).toFixed(1)
     }
 }
 
@@ -643,7 +643,7 @@ async function finalScore() {
     if (foundPlayerObj !== undefined) {
         console.log(foundPlayerObj)
         foundPlayerObj.answered += POINTS_SCORED
-        foundPlayerObj.total += Number(questionsSlider.value)
+        foundPlayerObj.total += Number(numberOfQuestionsSlider.value)
         foundPlayerObj.correct = (foundPlayerObj.answered / foundPlayerObj.total * 100).toFixed(1)
         foundPlayerObj.time += TOTAL_TIME_PLAYED
         foundPlayerObj.averageTime = (foundPlayerObj.time / foundPlayerObj.total).toFixed(1)
@@ -658,7 +658,7 @@ async function finalScore() {
     addPlayersToLeaderboard()
 
     let textForNickname = nicknameInput.value === '' ? 'UNKNOWN' : nicknameInput.value
-    let textForPointsScored = `${POINTS_SCORED}/${questionsSlider.value}`
+    let textForPointsScored = `${POINTS_SCORED}/${numberOfQuestionsSlider.value}`
     let textForSeconds = `${TOTAL_TIME_PLAYED} seconds`
 
     resultNicknameDiv.innerText = ''
@@ -669,11 +669,11 @@ async function finalScore() {
 
     containerForQuestions.style.opacity = '0'
 
-    if (POINTS_SCORED / questionsSlider.value * 100 > 75)
+    if (POINTS_SCORED / numberOfQuestionsSlider.value * 100 > 75)
         containerForEnding.style.backgroundImage = `url('pictures/albert_einstein.jpg')`
-    else if (POINTS_SCORED / questionsSlider.value * 100 > 50)
+    else if (POINTS_SCORED / numberOfQuestionsSlider.value * 100 > 50)
         containerForEnding.style.backgroundImage = `url('pictures/big_brain.jpg')`
-    else if (POINTS_SCORED / questionsSlider.value * 100 > 25)
+    else if (POINTS_SCORED / numberOfQuestionsSlider.value * 100 > 25)
         containerForEnding.style.backgroundImage = `url('pictures/not_bad.jpg')`
     else containerForEnding.style.backgroundImage = `url('pictures/better_luck_next_time.webp')`
 
@@ -694,6 +694,7 @@ const playAgainButton = document.querySelector('#play-again-button')
 playAgainButton.addEventListener('click', () => {
 
     for (const id of TIMEOUT_IDS) clearTimeout(id)
+
     containerForEnding.style.opacity = '0'
 
     let id = setTimeout(() => {
