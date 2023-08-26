@@ -63,6 +63,8 @@ body {
     justify-content: center;
     align-items: center;
     margin: 30px 0;
+    border: 2px solid green;
+    translate: -2px;
 }
 
 #questions-slider {
