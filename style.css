@@ -63,8 +63,12 @@ body {
     justify-content: center;
     align-items: center;
     margin: 30px 0;
-    border: 2px solid green;
     translate: -2px;
+}
+
+#amount-of-questions-span {
+    display: inline-block;
+    width: 30px;
 }
 
 #questions-slider {
@@ -169,10 +173,13 @@ body {
     text-align: center;
 }
 
-#number-of-questions-span {
-    font-size: 26px;
-    text-align: justify;
-    margin-left: 7%;
+#number-of-questions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    width: 100%;
+    text-align: center;
 }
 
 #nickname-input:focus {
