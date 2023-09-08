@@ -815,7 +815,6 @@ label {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    /* border: 2px solid blue; */
 }
 
 #play-again-button {
@@ -1024,17 +1023,34 @@ label {
 
 #leaderboard-dialog {
     margin-top: 40px;
-    width: 100%;
-    max-width: 450px;
-    overflow: hidden;
+    width: 460px;
     background: radial-gradient(lightcyan, lightgray)
 }
 
 #table-div {
-    max-height: 200px;
+    max-height: 385px;
     overflow-y: auto;
 }
-
+#table-div th {
+    width: 100%;
+    font-size: 14px;
+}
+#normal-leaderboard-table, #challenge-leaderboard-table {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+br {
+    display: block;
+    padding: 0;
+    margin: 0;
+    padding-inline: 0;
+    margin-inline: 0;
+    height: 1px;
+}
 .fa-trophy:hover {
     transition: 0.1s ease-in-out;
     scale: 1.2;
@@ -1135,9 +1151,6 @@ td {
     font-size: 15px;
 }
 
-th {
-    font-size: 15px;
-}
 
 #upload-picture-div {
     width: 100%;
@@ -1202,11 +1215,9 @@ th {
 }
 
 .table-header-divs {
-    margin-right: 10px;
     text-align: center;
-    transform: translate(5px);
+    padding: 0 10px;
 }
-
 
 #info-div {
     display: none;
@@ -1357,18 +1368,9 @@ a:hover {
     #leaderboard-dialog {
         width: 320px;
     }
-    #table-div {
-        width: calc(100% + 20px);
-        transform: translate(-12px);
-    }
-    #normal-leaderboard-table{
-        font-size: 12px;
-        display: block;
-        width: 100%;
-        padding: 0 5px;
-    } 
     .table-header-divs {
         font-size: 9px;
+        padding: 0 6px;
     }
     #reset-leaderboard-button {
         font-size: 10px;
@@ -1377,19 +1379,17 @@ a:hover {
     #switch-leaderboard-table-button {
         width: 250px;
         font-size: 10px;
-        margin-top: 10px;
+        margin-top: 20px;
     }
     #switch-leaderboard-table-div {
-        margin-top: -25px;
+        margin-top: -15px;
     }
     #reset-leaderboard-div {
         margin-bottom: 0px;
     }
-    th {
-        box-sizing: content-box;
-        padding: 0 4px;
+
+    #are-you-sure-div {
+        translate: 0 -15px;
     }
-    .sort-by-time {
-        width: 100%;
-    }
+
 }
