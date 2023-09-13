@@ -15,9 +15,6 @@ body {
     height: 600px;
 }
 
-/* #container-for-selection, #container-for-questions, #container-for-ending {
-    
-} */
 #container-for-selection * {
     transition: ease-in 0.2s;
 }
@@ -1130,6 +1127,11 @@ br {
     cursor: pointer;
 }
 
+td {
+    text-align: center;
+    font-size: 15px;
+}
+
 th:nth-child(1) {
     color: rgb(185, 86, 185);
 }
@@ -1145,13 +1147,6 @@ th:nth-child(3) {
 th:nth-child(4) {
     color: rgb(179, 76, 50);
 }
-
-
-td {
-    text-align: center;
-    font-size: 15px;
-}
-
 
 #upload-picture-div {
     width: 100%;
