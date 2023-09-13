@@ -13,6 +13,7 @@ const totalQuestionsDiv = document.querySelector('#total-questions-div')
 const resultNicknameDiv = document.querySelector('#result-nickname-div')
 const resultPointsScoredDiv = document.querySelector('#result-points-scored-div')
 const numberOfSecondsDiv = document.querySelector('#number-of-seconds-div')
+const nameSummoner = document.querySelectorAll('.name-summoner')
 currentQuestionNumberDiv.textContent = 1
 let CURRENT_QUESTION_NUMBER = 1
 let LEADERBOARD_TYPE_SWITCH = true
@@ -46,7 +47,13 @@ const DIFFICULTIES_ARR = ['EASY', 'MEDIUM', 'HARD']
 const CATEGORIES_ARR = ['Arts & Literature', 'Film & TV', 'Food & Drink', 'General Knowledge', 'Geography', 'History'
     , 'Music', 'Science', 'Society & Culture', 'Sport & Leisure']
 
-const nameSummoner = document.querySelectorAll('.name-summoner')
+    
+let TOTAL_TIME_PLAYED = 0
+let POINTS_SCORED = 0
+let SECONDS_TO_ANSWER = 10
+let COUNTER = SECONDS_TO_ANSWER
+let QUIZ_QUESTIONS_LEFT_TO_ANSWER = []
+let CURRENT_QUESTION_OBJ = {}
 
 function startColorChangingInterval(start = true) {
 
@@ -62,13 +69,6 @@ function startColorChangingInterval(start = true) {
         INTERVAL_IDS.push(colorChangingInterval)
     }
 }
-
-let TOTAL_TIME_PLAYED = 0
-let POINTS_SCORED = 0
-let SECONDS_TO_ANSWER = 10
-let COUNTER = SECONDS_TO_ANSWER
-let QUIZ_QUESTIONS_LEFT_TO_ANSWER = []
-let CURRENT_QUESTION_OBJ = {}
 
 function openOrCloseDifficulty() {
     const contentHeight = chooseDifficultyDiv.scrollHeight;
