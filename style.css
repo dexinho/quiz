@@ -989,6 +989,22 @@ label {
     height: 1px;
 }
 
+#leaderboard-dialog {
+    margin-top: 40px;
+    width: 460px;
+    background: radial-gradient(lightcyan, lightgray)
+}
+
+#table-div {
+    max-height: 385px;
+    overflow-y: auto;
+}
+#table-div th {
+    width: 100%;
+    font-size: 14px;
+    overflow: hidden;
+}
+
 #trophy-div {
     transition: 0.1s ease-in-out;
     margin: 5px 0 0 0;
@@ -1018,20 +1034,6 @@ label {
     scale: 0.9;
 }
 
-#leaderboard-dialog {
-    margin-top: 40px;
-    width: 460px;
-    background: radial-gradient(lightcyan, lightgray)
-}
-
-#table-div {
-    max-height: 385px;
-    overflow-y: auto;
-}
-#table-div th {
-    width: 100%;
-    font-size: 14px;
-}
 #normal-leaderboard-table, #challenge-leaderboard-table {
     margin: 0 auto;
     display: flex;
