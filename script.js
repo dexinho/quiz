@@ -476,7 +476,7 @@ async function startOrResumeQuiz(resuming = false) {
         await pauseForHowManyMilliseconds(1000)
 
         addAnimationToHeart()
-        localStorageInput()
+        updateLocalStorageData()
     }
     else finalScore()
 }
@@ -498,7 +498,7 @@ const reduceSecondsFromTimer = () => {
     })
 }
 
-async function localStorageInput() {
+async function updateLocalStorageData() {
 
     totalQuestionsDiv.innerText = numberOfQuestionsSlider.value
     COUNTER = SECONDS_TO_ANSWER
@@ -514,14 +514,17 @@ async function localStorageInput() {
         button.style.color = 'black'
     })
 }
-function pauseTimer() {
-    for (const id of TIMEOUT_IDS) clearTimeout(id)
-}
+
 function stopTimer() {
     for (const id of TIMEOUT_IDS) clearTimeout(id)
     timerInsideHeart.innerText = ''
     COUNTER = SECONDS_TO_ANSWER
 }
+
+function pauseTimer() {
+    for (const id of TIMEOUT_IDS) clearTimeout(id)
+}
+
 
 const returnButton = document.querySelector('#return-button')
 returnButton.addEventListener('click', resetContainers)
@@ -573,10 +576,9 @@ async function fetchQuizData() {
 
 }
 
+const correctOrWrongButtons = document.querySelectorAll('.correct-or-wrong-answer-buttons')
 const chosenCategoryDiv = document.querySelector('#chosen-category-div')
 const chosenQuestionDiv = document.querySelector('#chosen-question-div')
-
-const correctOrWrongButtons = document.querySelectorAll('.correct-or-wrong-answer-buttons')
 
 correctOrWrongButtons.forEach(button => {
     button.disabled = true
