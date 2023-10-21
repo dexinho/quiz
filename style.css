@@ -26,7 +26,6 @@ body {
     width: 60%;
     height: 600px;
     background: linear-gradient(rgb(200, 255, 255) 10%, rgb(210, 255, 255) 15%, rgb(224, 255, 255) 65%, rgb(210, 255, 255) 80%, rgb(200, 255, 255) 100%);
-    /* background-color: lightcyan; */
     transition: all ease-in 1s;
     border: 5px dotted gray;
 }
@@ -161,7 +160,6 @@ body {
     height: 40px;
     text-align: center;
     font-size: 25px;
-    /* background-color: rgb(210, 255, 255); */
     background-color: transparent;
     border: 0px;
     border-bottom: 2px solid black;
@@ -191,7 +189,6 @@ body {
 #nickname-input:focus {
     background-color: transparent;
     border-bottom: 2px solid black;
-    /* border-inline: 5px solid lightcyan; */
     outline: 0;
 }
 
@@ -366,8 +363,6 @@ label {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* border: 2px solid red; */
-    /* border-top: 5px dotted gray; */
 }
 
 #challenge-mode-button {
@@ -503,7 +498,6 @@ label {
 
 #current-question-number-div,
 #total-questions-div {
-    /* border: 2px solid green; */
     width: 40px;
     font-size: 25px;
     font-weight: bold;
@@ -524,7 +518,6 @@ label {
 }
 
 .animated-parts {
-    /* transform-origin: top; */
     animation: changeColor 10s linear infinite;
 }
 
@@ -533,7 +526,6 @@ label {
 }
 
 .animated-parts-challenge {
-    /* transform-origin: top; */
     animation: changeColor 5s linear infinite;
 }
 
@@ -704,6 +696,10 @@ label {
     text-align: center;
 }
 
+.opacity-for-category-and-question {
+    opacity: 0;
+}
+
 #chosen-category-div {
     height: 50px;
     color: brown;
@@ -715,9 +711,6 @@ label {
     overflow: hidden;
 }
 
-.opacity-for-category-and-question {
-    opacity: 0;
-}
 
 #final-screen-div {
     display: flex;
