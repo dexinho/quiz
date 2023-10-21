@@ -16,9 +16,9 @@ const numberOfSecondsDiv = document.querySelector('#number-of-seconds-div')
 const nameSummoner = document.querySelectorAll('.name-summoner')
 currentQuestionNumberDiv.textContent = 1
 let CURRENT_QUESTION_NUMBER = 1
-let LEADERBOARD_TYPE_SWITCH = true
+let LEADERBOARD_TYPE_FLAG = true
 let LEADERBOARD_TO_RESET = true
-let LEADERBOARD_STATS_SWITCH = false
+let LEADERBOARD_STATS_FLAG = false
 let LEADERBOARD_STATS_TYPE = 'normalLeaderboardStats'
 
 const TIMEOUT_IDS = []
@@ -716,8 +716,8 @@ challengeModeButton.addEventListener('click', () => {
 
     CHALLENGE_ACTIVATED = !CHALLENGE_ACTIVATED
 
-    LEADERBOARD_STATS_TYPE = LEADERBOARD_STATS_SWITCH ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
-    LEADERBOARD_STATS_SWITCH = !LEADERBOARD_STATS_SWITCH
+    LEADERBOARD_STATS_TYPE = LEADERBOARD_STATS_FLAG ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
+    LEADERBOARD_STATS_FLAG = !LEADERBOARD_STATS_FLAG
 
     containerForSelection.style.transition = 'ease-in 0.2s'
 
@@ -797,7 +797,7 @@ deleteNameFromTheSelection.addEventListener('click', () => {
 
 const resetLeaderboardButton = document.querySelector('#reset-leaderboard-button')
 const leaderboardTable = document.querySelector('#normal-leaderboard-table')
-function resetLeaderboard(resetButton = true) {
+function resetLeaderboardStats(resetButton = true) {
 
     const tbody = resetButton ? leaderboardTable.firstElementChild : leaderboardTable.nextElementSibling.firstElementChild
 
@@ -869,7 +869,7 @@ const areYouSureDiv = document.querySelector('#are-you-sure-div')
 
 yesDecisionButton.addEventListener('click', () => {
     areYouSureDiv.style.display = 'none'
-    resetLeaderboard(LEADERBOARD_TO_RESET)
+    resetLeaderboardStats(LEADERBOARD_TO_RESET)
 })
 noDecisionButton.addEventListener('click', () => {
     areYouSureDiv.style.display = 'none'
@@ -897,7 +897,7 @@ function sortLeaderBoard(arr, property, switchType) {
 const tableHeaderDivs = document.querySelectorAll('.table-header-divs')
 tableHeaderDivs.forEach(header => {
     header.addEventListener('click', () => {
-        let leaderboardType = LEADERBOARD_TYPE_SWITCH ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
+        let leaderboardType = LEADERBOARD_TYPE_FLAG ? 'normalLeaderboardStats' : 'challengeLeaderboardStats'
         const chosenStatsArr = JSON.parse(localStorage.getItem(leaderboardType)) || []
         if (header.classList.contains('sort-by-name')) {
             sortLeaderBoard(chosenStatsArr, 'name', LEADERBOARD_SORT_NAME_SWITCH)
@@ -928,7 +928,7 @@ tableHeaderDivs.forEach(header => {
 function switchLeaderboard() {
     const tdCells = document.querySelectorAll('td')
 
-    if (LEADERBOARD_TYPE_SWITCH) {
+    if (LEADERBOARD_TYPE_FLAG) {
         normalLeaderboardTable.style.display = 'none'
         challengeLeaderboardTable.style.display = 'block'
         switchLeaderboardButton.style.background = 'radial-gradient(rgb(248, 248, 248), rgb(127, 127, 216))'
@@ -953,7 +953,7 @@ function switchLeaderboard() {
     }
 
     LEADERBOARD_TO_RESET = !LEADERBOARD_TO_RESET
-    LEADERBOARD_TYPE_SWITCH = !LEADERBOARD_TYPE_SWITCH
+    LEADERBOARD_TYPE_FLAG = !LEADERBOARD_TYPE_FLAG
 }
 
 const switchLeaderboardButton = document.querySelector('#switch-leaderboard-table-button')
